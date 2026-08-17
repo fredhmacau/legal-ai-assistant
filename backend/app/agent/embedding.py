@@ -1,5 +1,6 @@
 from langchain_huggingface import HuggingFaceEndpointEmbeddings
 import time
+import os
 from langchain_chroma import Chroma
 from ..config import EMBED_TOKEN, CHROMA_COLLECTION, CHROMA_PERSIST_DIR
 from .text_extraction import todos_documentos
@@ -33,7 +34,37 @@ def indexar_em_lotes_com_retry(documentos, embed_model, persist_dir, collection_
         time.sleep(pausa)
     return vector_store
 
-vector_store = indexar_em_lotes_com_retry(
+
+def carregar_ou_criar_vectorstore(documentos, embed_model, persist_dir, collection_name):
+    """
+    Carrega o vectorstore existente se o banco de dados já existe.
+    Caso contrário, cria um novo banco de dados com os documentos.
+    """
+    db_exists = os.path.exists(os.path.join(persist_dir, "chroma.sqlite3"))
+    
+    if db_exists:
+        print(f"ChromaDB encontrado em {persist_dir}. Carregando collection '{collection_name}'...")
+        try:
+            vector_store = Chroma(
+                persist_directory=persist_dir,
+                collection_name=collection_name,
+                embedding_function=embed_model,
+            )
+            print(f"Collection carregada com sucesso. Total de documentos: {vector_store._collection.count()}")
+            return vector_store
+        except Exception as e:
+            print(f"Erro ao carregar ChromaDB existente: {e}. Recriando...")
+    
+    print(f"Criando novo ChromaDB em {persist_dir}...")
+    return indexar_em_lotes_com_retry(
+        documentos,
+        embed_model,
+        persist_dir=persist_dir,
+        collection_name=collection_name,
+    )
+
+
+vector_store = carregar_ou_criar_vectorstore(
     todos_documentos,
     embed_model,
     persist_dir=CHROMA_PERSIST_DIR,

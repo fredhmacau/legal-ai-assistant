@@ -2,7 +2,7 @@ from typing import TypedDict, Annotated
 from operator import add
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from pydantic import BaseModel, Field
-from agent.llm_providers import llm_groq, llm_cohere
+from ..agent.llm_providers import llm_groq, llm_cohere
 from .agent import EstadoAgente
 
 class AvaliacaoRecuperacao(BaseModel):

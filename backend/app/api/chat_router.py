@@ -24,7 +24,7 @@ class RespostaChat(BaseModel):
 
 
 @chat.post("/chat", response_model=RespostaChat)
-async def chat(pedido: PedidoChat):
+async def handle_chat(pedido: PedidoChat):
     session_id = pedido.session_id or str(uuid.uuid4())
     config = {"configurable": {"thread_id": session_id}}
   
