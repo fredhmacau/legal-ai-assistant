@@ -276,5 +276,5 @@ O **Legal AI (Kamba da Lei)** é um assistente de inteligência artificial de ca
 
 Desenvolvido por **Frederico Macau**:
 - **GitHub:** [@fredhmacau](https://github.com/fredhmacau)
-- **LinkedIn:** [Frederico Macau](https://www.linkedin.com/in/fredhmacau)
+- **LinkedIn:** [Frederico Macau](www.linkedin.com/in/frederico-macau-195167273)
 - **Repositório do Projeto:** [legal-ai-assistant](https://github.com/fredhmacau/legal-ai-assistant)
