@@ -117,7 +117,7 @@ export default function ChatInput({
             lineHeight="14px"
             letterSpacing="0.05em"
             color="rgba(92, 63, 61, 0.7)"
-            textTransform="uppercase"
+            
           >
             A IA pode cometer erros. Consulte sempre um advogado para decisões críticas.
           </Text>

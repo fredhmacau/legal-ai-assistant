@@ -36,7 +36,8 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": {"description": "API do agente Legal IA",
+    "version": "1.0"}}
 
 
 @app.get("/health")

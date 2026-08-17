@@ -48,7 +48,7 @@ function CopyButton({ textToCopy }) {
       size="sm"
     >
       {copied ? <MdCheck size={18} /> : <MdContentCopy size={18} />}
-      {copied ? "COPIADO" : "COPIAR"}
+      {copied ? "copiado" : "copiar"}
     </Button>
   );
 }
@@ -211,7 +211,7 @@ export default function ChatPage({ onOpenPdfModal }) {
               color="#5c3f3d"
               
             >
-              {isLoading ? "A Consultar RAG..." : "Sessão Jurídica Ativa"}
+              {isLoading ? "A Consultar RAG..." : "Sessão jurídica ativa"}
             </Text>
           </Flex>
 
@@ -414,9 +414,9 @@ export default function ChatPage({ onOpenPdfModal }) {
                           lineHeight="16px"
                           letterSpacing="0.05em"
                           color="#a30019"
-                          textTransform="uppercase"
+                          
                         >
-                          Resposta Gerada por IA Legal RAG
+                          Resposta gerada por IA
                         </Text>
                       </Box>
                     </Flex>

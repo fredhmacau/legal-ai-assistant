@@ -259,8 +259,8 @@ Verifique a cláusula de período experimental expressa no seu contrato de traba
 ##  Deploy na Nuvem (Oracle Cloud Infrastructure - OCI)
 
 A aplicação foi projetada para execução em nuvem na **Oracle Cloud Infrastructure (OCI)**:
-- **Backend**: Containerizado em instância Compute VM (Ubuntu) na OCI, executando FastAPI via Uvicorn e Nginx como reverse proxy.
-- **Frontend**: Hospedado como build estática no OCI Object Storage / Compute Instance com entrega otimizada.
+- **Backend**: Containerizado em instância Compute VM (Ubuntu) na OCI, executando FastAPI via Uvicorn.
+- **Frontend**: Hospedado como build estática no surge.sh.
 
 > **Status do Deploy:** Em processo / publicação no ambiente cloud.
 
@@ -272,7 +272,7 @@ O **Legal AI (Kamba da Lei)** é um assistente de inteligência artificial de ca
 
 ---
 
-## 👨‍💻 Autor & Contactos
+## Autor & Contactos
 
 Desenvolvido por **Frederico Macau**:
 - **GitHub:** [@fredhmacau](https://github.com/fredhmacau)
