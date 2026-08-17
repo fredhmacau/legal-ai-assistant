@@ -1,6 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { MdPictureAsPdf } from "react-icons/md";
+import { FaGithub, FaLinkedin } from "react-icons/fa6";
 
 export default function Footer({ onOpenPdfModal }) {
   return (
@@ -10,18 +11,11 @@ export default function Footer({ onOpenPdfModal }) {
       bg="#f3f4f5"
       borderTop="1px solid"
       borderColor="rgba(230, 189, 186, 0.3)"
-      py={{ base: "32px", md: "48px" }}
+      py={{ base: "32px", md: "40px" }}
     >
       <Box maxW="1280px" mx="auto" px={{ base: "16px", md: "40px" }}>
-        {/* Top Row */}
-        
-
         {/* Links Row */}
         <Flex
-          mt="24px"
-          pt="24px"
-          borderTop="1px solid"
-          borderColor="rgba(230, 189, 186, 0.2)"
           flexWrap="wrap"
           gap={{ base: "16px", md: "24px" }}
           justifyContent="center"
@@ -70,14 +64,46 @@ export default function Footer({ onOpenPdfModal }) {
             </Text>
           </Link>
 
-          <Text
-            fontFamily="'Montserrat', sans-serif"
-            fontSize="13px"
-            fontWeight="500"
-            color="#916f6c"
-          >
-            Lei n.º 12/23 & CRA 2010
-          </Text>
+          <Box h="14px" w="1px" bg="rgba(230, 189, 186, 0.6)" display={{ base: "none", sm: "block" }} />
+
+          {/* Social Links */}
+          <Flex alignItems="center" gap="16px">
+            <Box
+              as="a"
+              href="https://github.com/fredhmacau/legal-ai-assistant"
+              target="_blank"
+              rel="noopener noreferrer"
+              color="#5c3f3d"
+              _hover={{ color: "#191c1d", transform: "scale(1.1)" }}
+              transition="all 0.2s"
+              display="flex"
+              alignItems="center"
+              gap="4px"
+            >
+              <FaGithub size={16} />
+              <Text fontFamily="'Montserrat', sans-serif" fontSize="13px" fontWeight="600">
+                GitHub
+              </Text>
+            </Box>
+
+            <Box
+              as="a"
+              href="www.linkedin.com/in/frederico-macau-195167273"
+              target="_blank"
+              rel="noopener noreferrer"
+              color="#0a66c2"
+              _hover={{ color: "#084e96", transform: "scale(1.1)" }}
+              transition="all 0.2s"
+              display="flex"
+              alignItems="center"
+              gap="4px"
+            >
+              <FaLinkedin size={16} />
+              <Text fontFamily="'Montserrat', sans-serif" fontSize="13px" fontWeight="600">
+                LinkedIn
+              </Text>
+            </Box>
+          </Flex>
         </Flex>
       </Box>
     </Box>

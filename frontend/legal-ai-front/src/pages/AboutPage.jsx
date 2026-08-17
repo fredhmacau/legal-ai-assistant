@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Button, Grid } from "@chakra-ui/react";
+import { Box, Flex, Text, Button, Grid, Image } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import {
   MdGavel,
@@ -11,6 +11,8 @@ import {
   MdPsychology,
   MdMenuBook as MdBook,
 } from "react-icons/md";
+import { FaGithub, FaLinkedin } from "react-icons/fa6";
+import avatarFm from "../assets/fm.png";
 
 export default function AboutPage({ onOpenPdfModal }) {
   return (
@@ -324,9 +326,124 @@ export default function AboutPage({ onOpenPdfModal }) {
           </Box>
         </Grid>
 
-        {/* Legal Disclaimer Card */}
+        {/* Creator & Social Links Card */}
         <Box
           mt="48px"
+          bg="white"
+          borderRadius="20px"
+          p={{ base: "24px", md: "40px" }}
+          boxShadow="0 20px 40px rgba(0,0,0,0.04)"
+          border="1px solid #e7e8e9"
+          borderTop="4px solid #a30019"
+        >
+          <Flex
+            direction={{ base: "column", md: "row" }}
+            alignItems={{ base: "flex-start", md: "center" }}
+            justifyContent="space-between"
+            gap="24px"
+          >
+            <Flex alignItems="center" gap="20px">
+              <Image
+                src={avatarFm}
+                alt="Frederico Macau"
+                w={{ base: "56px", md: "64px" }}
+                h={{ base: "56px", md: "64px" }}
+                minW={{ base: "56px", md: "64px" }}
+                borderRadius="16px"
+                objectFit="cover"
+                boxShadow="0 8px 20px rgba(0,0,0,0.15)"
+                border="2px solid #fed330"
+              />
+              <Box>
+                <Text
+                  fontFamily="'Montserrat', sans-serif"
+                  fontSize={{ base: "18px", md: "22px" }}
+                  fontWeight="700"
+                  color="#191c1d"
+                  lineHeight="1.3"
+                >
+                  Frederico Macau
+                </Text>
+                <Text
+                  fontFamily="'JetBrains Mono', monospace"
+                  fontSize="12px"
+                  fontWeight="500"
+                  color="#a30019"
+                  letterSpacing="0.05em"
+                  
+                  mt="2px"
+                >
+                  Criador & Desenvolvedor do Projecto
+                </Text>
+                <Text
+                  fontFamily="'Montserrat', sans-serif"
+                  fontSize="14px"
+                  color="#5c3f3d"
+                  mt="6px"
+                  lineHeight="1.5"
+                  maxW="600px"
+                >
+                  Desenvolvido com foco no empoderamento jurídico e democratização da informação laboral em Angola.
+                </Text>
+              </Box>
+            </Flex>
+
+            {/* Social Links Buttons */}
+            <Flex gap="12px" flexWrap="wrap" w={{ base: "100%", md: "auto" }}>
+              <Button
+                as="a"
+                href="https://github.com/fredhmacau"
+                target="_blank"
+                rel="noopener noreferrer"
+                bg="#191c1d"
+                color="white"
+                fontFamily="'Montserrat', sans-serif"
+                fontSize="14px"
+                fontWeight="600"
+                px="20px"
+                py="12px"
+                borderRadius="8px"
+                gap="8px"
+                display="flex"
+                alignItems="center"
+                _hover={{ bg: "#333739", transform: "translateY(-2px)" }}
+                transition="all 0.2s"
+                flex={{ base: "1", sm: "initial" }}
+              >
+                <FaGithub size={18} />
+                GitHub
+              </Button>
+
+              <Button
+                as="a"
+                href="www.linkedin.com/in/frederico-macau-195167273"
+                target="_blank"
+                rel="noopener noreferrer"
+                bg="#0a66c2"
+                color="white"
+                fontFamily="'Montserrat', sans-serif"
+                fontSize="14px"
+                fontWeight="600"
+                px="20px"
+                py="12px"
+                borderRadius="8px"
+                gap="8px"
+                display="flex"
+                alignItems="center"
+                _hover={{ bg: "#084e96", transform: "translateY(-2px)" }}
+                transition="all 0.2s"
+                flex={{ base: "1", sm: "initial" }}
+              >
+                <FaLinkedin size={18} />
+                LinkedIn
+              </Button>
+            </Flex>
+          </Flex>
+        </Box>
+
+        {/* Legal Disclaimer Card */}
+        <Box
+          mt="32px"
           bg="#fff8f8"
           border="1px solid #ffb3ae"
           borderRadius="16px"

@@ -269,3 +269,12 @@ A aplicação foi projetada para execução em nuvem na **Oracle Cloud Infrastru
 ##  Aviso Legal (Disclaimer)
 
 O **Legal AI (Kamba da Lei)** é um assistente de inteligência artificial de cariz meramente **informativo e educacional**. As respostas produzidas não constituem parecer jurídico vinculativo nem substituem a consulta formal com um **Advogado ou Jurista** inscrito na **Ordem dos Advogados de Angola (OAA)** ou junto dos serviços da **Inspeção Geral do Trabalho (IGT)**.
+
+---
+
+## 👨‍💻 Autor & Contactos
+
+Desenvolvido por **Frederico Macau**:
+- **GitHub:** [@fredhmacau](https://github.com/fredhmacau)
+- **LinkedIn:** [Frederico Macau](https://www.linkedin.com/in/fredhmacau)
+- **Repositório do Projeto:** [legal-ai-assistant](https://github.com/fredhmacau/legal-ai-assistant)
