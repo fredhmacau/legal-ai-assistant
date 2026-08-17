@@ -480,18 +480,6 @@ export default function ChatPage({ onOpenPdfModal }) {
                       <MdShare size={18} />
                       PARTILHAR
                     </Button>
-
-                    <Flex ml={{ base: "0", md: "auto" }} alignItems="center" gap="8px">
-                      <MdVerified size={18} color="#5c3f3d" />
-                      <Text
-                        fontFamily="'JetBrains Mono', monospace"
-                        fontSize="11px"
-                        fontWeight="600"
-                        color="#5c3f3d"
-                      >
-                        VALIDADO PELO MINPRESI
-                      </Text>
-                    </Flex>
                   </Flex>
                 </Box>
               </Flex>

@@ -75,6 +75,7 @@ export default function Header({ onOpenPdfModal }) {
           display={{ base: "none", md: "flex" }}
           alignItems="center"
           gap="28px"
+          ml="auto"
         >
           {navLinks.map((link) =>
             link.isAction ? (
@@ -123,19 +124,7 @@ export default function Header({ onOpenPdfModal }) {
 
         {/* Right Actions & Mobile Hamburger */}
         <Flex alignItems="center" gap="12px">
-          <IconButton
-            aria-label="User profile"
-            rounded="full"
-            w="36px"
-            h="36px"
-            minW="36px"
-            bg="#a30019"
-            color="white"
-            _hover={{ bg: "#ce1126" }}
-            size="sm"
-          >
-            <MdPerson size={20} />
-          </IconButton>
+          
 
           {/* Mobile Menu Button */}
           <IconButton

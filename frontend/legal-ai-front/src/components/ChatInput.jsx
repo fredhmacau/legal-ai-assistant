@@ -53,68 +53,58 @@ export default function ChatInput({
       <Flex
         bg="white"
         boxShadow="0 12px 40px rgba(0,0,0,0.14)"
-        p={{ base: "6px", md: "8px" }}
+        p={{ base: "6px 8px", md: "8px 12px" }}
         borderRadius="14px"
         alignItems="center"
-        gap={{ base: "2", md: "4" }}
+        gap={{ base: "8px", md: "12px" }}
         border="2px solid transparent"
         _focusWithin={{ borderColor: "#a30019" }}
         transition="all 0.3s"
         opacity={isLoading ? 0.9 : 1}
       >
-        <Flex flex="1" pl={{ base: "8px", md: "16px" }}>
-          <Textarea
-            ref={textareaRef}
-            value={value}
-            disabled={isLoading}
-            onChange={(e) => setValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={isLoading ? "A analisar a legislação angolana..." : placeholder}
-            bg="transparent"
-            border="none"
-            outline="none"
-            fontFamily="'Montserrat', sans-serif"
-            fontSize={{ base: "14px", md: "16px" }}
-            fontWeight="400"
-            lineHeight="24px"
-            color="#191c1d"
-            minH={{ base: "44px", md: "52px" }}
-            maxH="180px"
-            resize="none"
-            rows={1}
-            _placeholder={{ color: "rgba(93, 63, 61, 0.4)" }}
-            _focus={{ boxShadow: "none", outline: "none" }}
-          />
-        </Flex>
-        <Flex alignItems="center" gap={{ base: "1", md: "2" }} pr={{ base: "4px", md: "8px" }}>
-          <IconButton
-            aria-label="Anexar ficheiro"
-            variant="ghost"
-            color="#5c3f3d"
-            _hover={{ color: "#a30019" }}
-            transition="color 0.2s"
-            size="md"
-            disabled={isLoading}
-          >
-            <MdAttachFile size={22} />
-          </IconButton>
-          <IconButton
-            aria-label="Enviar mensagem"
-            onClick={handleSend}
-            bg={isLoading ? "#e7e8e9" : "#fed330"}
-            color={isLoading ? "#5c3f3d" : "#231b00"}
-            w={{ base: "40px", md: "48px" }}
-            h={{ base: "40px", md: "48px" }}
-            borderRadius="10px"
-            boxShadow="md"
-            _hover={!isLoading ? { bg: "#a30019", color: "white" } : {}}
-            _active={!isLoading ? { transform: "scale(0.95)" } : {}}
-            transition="all 0.2s"
-            disabled={isLoading || !value.trim()}
-          >
-            {isLoading ? <Spinner size="sm" color="#a30019" /> : <MdSend size={22} />}
-          </IconButton>
-        </Flex>
+        <Textarea
+          ref={textareaRef}
+          value={value}
+          disabled={isLoading}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={isLoading ? "A analisar a legislação angolana..." : placeholder}
+          flex="1"
+          bg="transparent"
+          border="none"
+          outline="none"
+          fontFamily="'Montserrat', sans-serif"
+          fontSize={{ base: "14px", md: "16px" }}
+          fontWeight="400"
+          lineHeight="24px"
+          py={{ base: "10px", md: "12px" }}
+          pl={{ base: "12px", md: "16px" }}
+          pr="8px"
+          minH="48px"
+          maxH="180px"
+          resize="none"
+          rows={1}
+          color="#191c1d"
+          _placeholder={{ color: "rgba(93, 63, 61, 0.4)" }}
+          _focus={{ boxShadow: "none", outline: "none" }}
+        />
+        <IconButton
+          aria-label="Enviar mensagem"
+          onClick={handleSend}
+          bg={isLoading ? "#e7e8e9" : "#fed330"}
+          color={isLoading ? "#5c3f3d" : "#231b00"}
+          w={{ base: "44px", md: "48px" }}
+          h={{ base: "44px", md: "48px" }}
+          borderRadius="10px"
+          boxShadow="md"
+          _hover={!isLoading ? { bg: "#a30019", color: "white" } : {}}
+          _active={!isLoading ? { transform: "scale(0.95)" } : {}}
+          transition="all 0.2s"
+          disabled={isLoading || !value.trim()}
+          flexShrink={0}
+        >
+          {isLoading ? <Spinner size="sm" color="#a30019" /> : <MdSend size={22} />}
+        </IconButton>
       </Flex>
 
       {/* Disclaimer */}

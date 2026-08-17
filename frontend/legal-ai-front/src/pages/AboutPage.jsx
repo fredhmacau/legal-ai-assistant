@@ -25,29 +25,7 @@ export default function AboutPage({ onOpenPdfModal }) {
           maxW="840px"
           mx="auto"
         >
-          <Flex
-            display="inline-flex"
-            alignItems="center"
-            gap="8px"
-            mb="20px"
-            px="16px"
-            py="6px"
-            borderRadius="full"
-            bg="#e7e8e9"
-            border="1px solid rgba(230, 189, 186, 0.4)"
-          >
-            <MdVerifiedUser size={18} color="#a30019" />
-            <Text
-              fontFamily="'JetBrains Mono', monospace"
-              fontSize="12px"
-              fontWeight="600"
-              color="#5c3f3d"
-              textTransform="uppercase"
-              letterSpacing="0.05em"
-            >
-              Inteligência Jurídica Angolana
-            </Text>
-          </Flex>
+          
 
           <Text
             fontFamily="'Montserrat', sans-serif"
@@ -124,7 +102,7 @@ export default function AboutPage({ onOpenPdfModal }) {
           boxShadow="0 20px 40px rgba(0,0,0,0.04)"
           border="1px solid #e7e8e9"
         >
-          <Text
+          {/* <Text
             fontFamily="'JetBrains Mono', monospace"
             fontSize="13px"
             fontWeight="600"
@@ -134,7 +112,7 @@ export default function AboutPage({ onOpenPdfModal }) {
             mb="8px"
           >
             Tecnologia de Ponta
-          </Text>
+          </Text> */}
           <Text
             fontFamily="'Montserrat', sans-serif"
             fontSize={{ base: "24px", md: "32px" }}

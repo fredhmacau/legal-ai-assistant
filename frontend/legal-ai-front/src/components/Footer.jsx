@@ -14,50 +14,7 @@ export default function Footer({ onOpenPdfModal }) {
     >
       <Box maxW="1280px" mx="auto" px={{ base: "16px", md: "40px" }}>
         {/* Top Row */}
-        <Flex
-          direction={{ base: "column", md: "row" }}
-          justifyContent="space-between"
-          alignItems="center"
-          gap={{ base: "16px", md: "8px" }}
-          textAlign={{ base: "center", md: "left" }}
-        >
-          <Flex alignItems="center" gap="2">
-            <Text
-              fontFamily="'Montserrat', sans-serif"
-              fontSize="20px"
-              fontWeight="700"
-              lineHeight="28px"
-              color="#191c1d"
-            >
-              Kamba da Lei
-            </Text>
-            <Box
-              px="8px"
-              py="2px"
-              bg="#e7e8e9"
-              borderRadius="4px"
-            >
-              <Text
-                fontFamily="'JetBrains Mono', monospace"
-                fontSize="12px"
-                fontWeight="600"
-                lineHeight="16px"
-                letterSpacing="0.05em"
-                color="#a30019"
-              >
-                AI LEGAL RAG
-              </Text>
-            </Box>
-          </Flex>
-          <Text
-            fontFamily="'Montserrat', sans-serif"
-            fontSize="14px"
-            fontWeight="400"
-            color="#5c3f3d"
-          >
-            © 2026 República de Angola. Justiça, Transparência e Eficiência.
-          </Text>
-        </Flex>
+        
 
         {/* Links Row */}
         <Flex

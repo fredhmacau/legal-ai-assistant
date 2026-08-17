@@ -20,7 +20,7 @@ const ragDocuments = [
   {
     id: "cra-angola",
     title: "Constituição da República de Angola (CRA)",
-    category: "Constitucional",
+    category: "",
     diploma: "Constituição da República de Angola",
     year: "2010 (Revisão Constitucional 2021)",
     description:
@@ -33,7 +33,7 @@ const ragDocuments = [
   {
     id: "lgt-2023",
     title: "Lei Geral do Trabalho (Lei n.º 12/23)",
-    category: "Direito Laboral",
+    category: "",
     diploma: "Lei n.º 12/23 de 27 de Dezembro",
     year: "2023",
     description:
@@ -108,15 +108,7 @@ export default function PdfDownloadModal({ isOpen, onClose }) {
               >
                 Legislação Oficial Indexada no RAG
               </Text>
-              <Text
-                fontFamily="'JetBrains Mono', monospace"
-                fontSize="11px"
-                fontWeight="500"
-                color="#fed330"
-                letterSpacing="0.05em"
-              >
-                CONSTITUIÇÃO DA REPÚBLICA & LEI GERAL DO TRABALHO
-              </Text>
+              
             </Box>
           </Flex>
           <IconButton
@@ -246,39 +238,7 @@ export default function PdfDownloadModal({ isOpen, onClose }) {
         </Box>
 
         {/* Footer */}
-        <Flex
-          px={{ base: "20px", md: "32px" }}
-          py="16px"
-          bg="#f3f4f5"
-          borderTop="1px solid #e7e8e9"
-          alignItems="center"
-          justifyContent="space-between"
-          flexWrap="wrap"
-          gap="12px"
-        >
-          <Flex alignItems="center" gap="8px">
-            <MdVerified color="#16a34a" size={18} />
-            <Text
-              fontFamily="'JetBrains Mono', monospace"
-              fontSize="11px"
-              color="#5c3f3d"
-            >
-              Links directos para fontes oficiais (CIPRA & INEJ)
-            </Text>
-          </Flex>
-
-          <Button
-            onClick={onClose}
-            variant="outline"
-            size="sm"
-            borderColor="#916f6c"
-            color="#191c1d"
-            _hover={{ bg: "#e7e8e9" }}
-            fontFamily="'Montserrat', sans-serif"
-          >
-            Fechar
-          </Button>
-        </Flex>
+       
       </Box>
     </Box>
   );
