@@ -2,9 +2,9 @@ from typing import TypedDict, Annotated
 from operator import add
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from pydantic import BaseModel, Field
-from agent.llm_providers import llm_groq
+from ..agent.llm_providers import llm_groq
+from ..agent.detect_and_recover import recuperacao_hibrida
 from .agent import EstadoAgente
-from agent.detect_and_recover import recuperacao_hibrida
 
 class PerguntaContextualizada(BaseModel):
     pergunta_autonoma: str = Field(

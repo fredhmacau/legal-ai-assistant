@@ -1,8 +1,8 @@
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
-from models.agent import EstadoAgente
-from models.context import contextualizar_pergunta, decompor_pergunta, recuperar
-from models.assessment_recovery import sintetizar, auto_criticar
+from ..models.agent import EstadoAgente
+from ..models.context import contextualizar_pergunta, decompor_pergunta, recuperar
+from ..models.assessment_recovery import sintetizar, auto_criticar
 
 
 checkpointer = MemorySaver()

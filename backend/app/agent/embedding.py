@@ -1,8 +1,8 @@
 from langchain_huggingface import HuggingFaceEndpointEmbeddings
 import time
 from langchain_chroma import Chroma
-from config import EMBED_TOKEN, CHROMA_COLLECTION, CHROMA_PERSIST_DIR
-from text_extraction import todos_documentos
+from ..config import EMBED_TOKEN, CHROMA_COLLECTION, CHROMA_PERSIST_DIR
+from .text_extraction import todos_documentos
 
 embed_model = HuggingFaceEndpointEmbeddings(
     model="intfloat/multilingual-e5-large",

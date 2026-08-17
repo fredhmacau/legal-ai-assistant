@@ -2,7 +2,7 @@ from typing import TypedDict, Annotated
 from operator import add
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from pydantic import BaseModel, Field
-from agent.llm_providers import llm_groq
+from ..agent.llm_providers import llm_groq
 
 class EstadoAgente(TypedDict):
     pergunta_original: str

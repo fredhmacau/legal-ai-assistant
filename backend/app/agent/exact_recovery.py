@@ -1,6 +1,6 @@
 from rank_bm25 import BM25Okapi
 import re
-from text_extraction import todos_documentos
+from .text_extraction import todos_documentos
 
 def tokenizar_pt(texto: str) -> list[str]:
     """

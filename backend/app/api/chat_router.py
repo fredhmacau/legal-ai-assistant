@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, HTTPException
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field
-from agent.supervisor import agente
+from ..agent.supervisor import agente
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("legal_ai")

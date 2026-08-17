@@ -1,7 +1,7 @@
-from exact_recovery import buscar_bm25, reciprocal_rank_fusion
+from .exact_recovery import buscar_bm25, reciprocal_rank_fusion
 import re
-from text_extraction import todos_documentos
-from embedding import vector_store
+from .text_extraction import todos_documentos
+from .embedding import vector_store
 
 def detectar_artigo_explicito(pergunta: str) -> str | None:
     match = re.search(r'artigo\s+(\d+)', pergunta.lower())
