@@ -4,7 +4,7 @@
 
 ---
 
-## 📌 Sumário
+##  Sumário
 - [Descrição Geral](#-descrição-geral)
 - [Arquitetura da Solução (Agentic RAG)](#-arquitetura-da-solução-agentic-rag)
 - [Tecnologias e Ferramentas](#-tecnologias-e-ferramentas)
@@ -21,7 +21,7 @@
 
 ---
 
-## 📖 Descrição Geral
+##  Descrição Geral
 
 Segundo dados do Instituto Nacional de Estatística de Angola (INE), cerca de 78% a 80% dos trabalhadores no país atuam no setor informal ou na fronteira com a informalidade. A **Lei Geral do Trabalho (Lei n.º 12/23)**, aprovada em Dezembro de 2023, trouxe mudanças substanciais às relações laborais, mas permanece pouco compreendida pela maioria da população. Somado a isso, o custo elevado de consultoria jurídica tradicional dificulta o acesso dos cidadãos ao conhecimento de seus direitos e garantias fundamentais previstos na **Constituição da República de Angola (CRA)**.
 
@@ -29,7 +29,7 @@ O **Legal AI (Kamba da Lei)** é um agente inteligente conversacional construíd
 
 ---
 
-## 🏛️ Arquitetura da Solução (Agentic RAG)
+##  Arquitetura da Solução (Agentic RAG)
 
 O sistema utiliza um grafo de decisão orquestrado com **LangGraph**, que implementa auto-reflexão, decomposição de consultas complexas e recuperação híbrida:
 
@@ -55,7 +55,7 @@ flowchart TD
 
 ---
 
-## 🛠️ Tecnologias e Ferramentas
+##  Tecnologias e Ferramentas
 
 ### Backend & Inteligência Artificial
 - **Linguagem**: Python 3.11+
@@ -77,7 +77,7 @@ flowchart TD
 
 ---
 
-## 📂 Estrutura do Repositório
+## Estrutura do Repositório
 
 ```text
 legal-ai-assistant/
@@ -127,7 +127,7 @@ legal-ai-assistant/
 
 ---
 
-## 📄 Processamento dos Documentos
+##  Processamento dos Documentos
 
 O pipeline processa diretamente os documentos oficiais em formato PDF via URL:
 
@@ -138,7 +138,7 @@ O pipeline processa diretamente os documentos oficiais em formato PDF via URL:
 
 ---
 
-## 🚀 Instruções de Execução
+##  Instruções de Execução
 
 ### Pré-requisitos
 - **Python 3.11+**
@@ -216,7 +216,7 @@ O pipeline processa diretamente os documentos oficiais em formato PDF via URL:
 
 ---
 
-## ❓ Exemplos de Perguntas
+##  Exemplos de Perguntas
 
 O agente está preparado para esclarecer situações reais do cotidiano laboral angolano:
 
@@ -230,10 +230,12 @@ O agente está preparado para esclarecer situações reais do cotidiano laboral 
    > *"Qual é o limite legal de trabalho suplementar por semana e como deve ser remunerado?"*
 5. **Garantias Constitucionais:**
    > *"O que a Constituição de Angola garante em relação à liberdade sindical e ao direito à greve?"*
+6. **Despedimento e Justa Causa:**
+   > *"Fui despedida três semanas depois de voltar da licença de maternidade."*
 
 ---
 
-## 💡 Exemplo de Resposta Gerada
+##  Exemplo de Resposta Gerada
 
 Quando questionado sobre o funcionamento do período experimental na LGT, o agente responde de forma estruturada:
 
@@ -254,16 +256,16 @@ Verifique a cláusula de período experimental expressa no seu contrato de traba
 
 ---
 
-## ☁️ Deploy na Nuvem (Oracle Cloud Infrastructure - OCI)
+##  Deploy na Nuvem (Oracle Cloud Infrastructure - OCI)
 
 A aplicação foi projetada para execução em nuvem na **Oracle Cloud Infrastructure (OCI)**:
 - **Backend**: Containerizado em instância Compute VM (Ubuntu) na OCI, executando FastAPI via Uvicorn e Nginx como reverse proxy.
 - **Frontend**: Hospedado como build estática no OCI Object Storage / Compute Instance com entrega otimizada.
 
-> **Status do Deploy:** Em processo de homologação / publicação no ambiente cloud.
+> **Status do Deploy:** Em processo / publicação no ambiente cloud.
 
 ---
 
-## ⚖️ Aviso Legal (Disclaimer)
+##  Aviso Legal (Disclaimer)
 
 O **Legal AI (Kamba da Lei)** é um assistente de inteligência artificial de cariz meramente **informativo e educacional**. As respostas produzidas não constituem parecer jurídico vinculativo nem substituem a consulta formal com um **Advogado ou Jurista** inscrito na **Ordem dos Advogados de Angola (OAA)** ou junto dos serviços da **Inspeção Geral do Trabalho (IGT)**.

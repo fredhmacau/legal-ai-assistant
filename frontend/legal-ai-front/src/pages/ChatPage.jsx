@@ -209,7 +209,7 @@ export default function ChatPage({ onOpenPdfModal }) {
               lineHeight="16px"
               letterSpacing="0.05em"
               color="#5c3f3d"
-              textTransform="uppercase"
+              
             >
               {isLoading ? "A Consultar RAG..." : "Sessão Jurídica Ativa"}
             </Text>
