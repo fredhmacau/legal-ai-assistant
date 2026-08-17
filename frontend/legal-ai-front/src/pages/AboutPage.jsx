@@ -72,7 +72,7 @@ export default function AboutPage({ onOpenPdfModal }) {
             color="#5c3f3d"
             mb="40px"
           >
-            O <Text as="span" fontWeight="700" color="#191c1d">Kamba da Lei</Text> é o seu assistente inteligente especializado no direito e diplomas legais da República de Angola. Combinamos inteligência artificial avançada com a rigorosa indexação dos Códigos e Leis nacionais.
+            O <Text as="span" fontWeight="700" color="#191c1d">Kamba da Lei</Text> é o seu assistente inteligente especializado na <Text as="span" fontWeight="700">Constituição da República de Angola</Text> e na <Text as="span" fontWeight="700">Lei Geral do Trabalho (Lei n.º 12/23)</Text>. Combinamos inteligência artificial com a rigorosa recuperação contextual de artigos oficiais.
           </Text>
 
           <Flex gap="16px" flexWrap="wrap" justifyContent="center">
@@ -179,7 +179,7 @@ export default function AboutPage({ onOpenPdfModal }) {
                 color="#5c3f3d"
                 lineHeight="1.6"
               >
-                Carregamos e estruturamos os ficheiros oficiais em PDF da Constituição da República, Lei Geral do Trabalho e Códigos Angolanos.
+                Carregamos e estruturamos os ficheiros oficiais em PDF da Constituição da República de Angola e da Lei Geral do Trabalho (Lei n.º 12/23).
               </Text>
             </Box>
 

@@ -13,7 +13,7 @@ import {
 
 const quickChips = [
   { icon: MdGavel, label: "Direitos do Trabalhador" },
-  { icon: MdDescription, label: "Contratos de Arrendamento" },
+  { icon: MdDescription, label: "Período Experimental (LGT)" },
   { icon: MdAccountBalance, label: "Constituição Angolana" },
 ];
 

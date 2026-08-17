@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { Box, Flex, Text, IconButton, Textarea } from "@chakra-ui/react";
+import { Box, Flex, Text, IconButton, Textarea, Spinner } from "@chakra-ui/react";
 import { MdSend, MdAttachFile } from "react-icons/md";
 
 export default function ChatInput({
   onSend,
+  isLoading = false,
   placeholder = "Coloque outra questão jurídica...",
   showDisclaimer = true,
   variant = "floating", // "floating" | "inline"
 }) {
   const [value, setValue] = useState("");
-  const [isSending, setIsSending] = useState(false);
   const textareaRef = useRef(null);
 
   useEffect(() => {
@@ -20,13 +20,13 @@ export default function ChatInput({
   }, [value]);
 
   const handleSend = () => {
-    if (value.trim() && !isSending) {
-      setIsSending(true);
-      onSend?.(value.trim());
-      setTimeout(() => {
-        setValue("");
-        setIsSending(false);
-      }, 300);
+    if (value.trim() && !isLoading) {
+      const message = value.trim();
+      setValue("");
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+      }
+      onSend?.(message);
     }
   };
 
@@ -60,14 +60,16 @@ export default function ChatInput({
         border="2px solid transparent"
         _focusWithin={{ borderColor: "#a30019" }}
         transition="all 0.3s"
+        opacity={isLoading ? 0.9 : 1}
       >
         <Flex flex="1" pl={{ base: "8px", md: "16px" }}>
           <Textarea
             ref={textareaRef}
             value={value}
+            disabled={isLoading}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={placeholder}
+            placeholder={isLoading ? "A analisar a legislação angolana..." : placeholder}
             bg="transparent"
             border="none"
             outline="none"
@@ -92,24 +94,25 @@ export default function ChatInput({
             _hover={{ color: "#a30019" }}
             transition="color 0.2s"
             size="md"
+            disabled={isLoading}
           >
             <MdAttachFile size={22} />
           </IconButton>
           <IconButton
             aria-label="Enviar mensagem"
             onClick={handleSend}
-            bg="#fed330"
-            color="#231b00"
+            bg={isLoading ? "#e7e8e9" : "#fed330"}
+            color={isLoading ? "#5c3f3d" : "#231b00"}
             w={{ base: "40px", md: "48px" }}
             h={{ base: "40px", md: "48px" }}
             borderRadius="10px"
             boxShadow="md"
-            _hover={{ bg: "#a30019", color: "white" }}
-            _active={{ transform: "scale(0.95)" }}
+            _hover={!isLoading ? { bg: "#a30019", color: "white" } : {}}
+            _active={!isLoading ? { transform: "scale(0.95)" } : {}}
             transition="all 0.2s"
-            disabled={isSending || !value.trim()}
+            disabled={isLoading || !value.trim()}
           >
-            <MdSend size={22} />
+            {isLoading ? <Spinner size="sm" color="#a30019" /> : <MdSend size={22} />}
           </IconButton>
         </Flex>
       </Flex>

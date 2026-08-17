@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { Box, Flex, Text, Button, Grid } from "@chakra-ui/react";
+import { useState, useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Box, Flex, Text, Button, Spinner } from "@chakra-ui/react";
 import {
   MdGavel,
   MdContentCopy,
@@ -9,50 +9,25 @@ import {
   MdShare,
   MdVerified,
   MdPictureAsPdf,
+  MdRefresh,
+  MdErrorOutline,
+  MdAdd,
 } from "react-icons/md";
 import ChatInput from "../components/ChatInput";
+import MarkdownRenderer from "../components/MarkdownRenderer";
+import { sendChatMessage } from "../services/api";
 
-// Sample AI response data
-const sampleResponse = {
-  title: "FUNDAMENTAÇÃO JURÍDICA",
-  subtitle: "Resposta Gerada por IA Legal RAG v4.2",
-  tags: ["LGT 2024", "DIREITO LABORAL"],
-  introduction:
-    'O período experimental na República de Angola é regido pela Lei n.º 12/23 (Lei Geral do Trabalho). Este período destina-se à verificação mútua da aptidão do trabalhador e do interesse do empregador.',
-  cards: [
-    {
-      title: "Regra Geral",
-      text: "O período experimental padrão é de 60 dias para a maioria dos contratos por tempo indeterminado.",
-      highlight: "60 dias",
-      borderColor: "#ce1126",
-    },
-    {
-      title: "Cargos Complexos",
-      text: "Para funções de elevada complexidade técnica ou cargos de direção, o prazo pode estender-se até 180 dias.",
-      highlight: "180 dias",
-      borderColor: "#725c00",
-    },
-  ],
-  articles: [
-    {
-      number: "Artigo 45.º",
-      tag: "Duração",
-      text: '"Durante o período experimental, qualquer das partes pode denunciar o contrato sem necessidade de pré-aviso, invocação de justa causa ou pagamento de indemnização."',
-    },
-    {
-      number: "Artigo 46.º",
-      tag: "Redução e Exclusão",
-      text: '"O período experimental pode ser reduzido ou excluído por acordo escrito entre as partes, ou por força de contrato colectivo de trabalho."',
-    },
-  ],
-};
-
-function CopyButton() {
+function CopyButton({ textToCopy }) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback
+    }
   };
 
   return (
@@ -80,12 +55,122 @@ function CopyButton() {
 
 export default function ChatPage({ onOpenPdfModal }) {
   const location = useLocation();
-  const userQuery =
-    location.state?.query ||
-    "Como funciona o período experimental na Lei Geral do Trabalho (LGT)?";
+  const navigate = useNavigate();
+  const initialQuery = location.state?.query || "";
+  
+  const [messages, setMessages] = useState([]);
+  const [sessionId, setSessionId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const hasInitializedRef = useRef(false);
+  const messagesEndRef = useRef(null);
 
-  const handleSend = (message) => {
-    console.log("New message:", message);
+  // Scroll to bottom when messages change
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
+
+  // Função principal para enviar pergunta ao backend
+  const handleSendMessage = async (perguntaText, currentSessionId = sessionId) => {
+    if (!perguntaText || !perguntaText.trim() || isLoading) return;
+
+    const query = perguntaText.trim();
+    setError(null);
+
+    // Adiciona a mensagem do usuário
+    const userMsgId = `user-${Date.now()}`;
+    const userMessage = {
+      id: userMsgId,
+      role: "user",
+      content: query,
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+
+    try {
+      const response = await sendChatMessage(query, currentSessionId);
+      
+      if (response.session_id) {
+        setSessionId(response.session_id);
+      }
+
+      const aiMessage = {
+        id: `ai-${Date.now()}`,
+        role: "assistant",
+        content: response.resposta,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+
+      setMessages((prev) => [...prev, aiMessage]);
+    } catch (err) {
+      console.error("Erro no chat:", err);
+      const errorMsg = err.message || "Ocorreu um erro ao consultar o assistente jurídico.";
+      setError({
+        message: errorMsg,
+        lastQuery: query,
+      });
+      const errorAiMsg = {
+        id: `err-${Date.now()}`,
+        role: "error",
+        content: errorMsg,
+        lastQuery: query,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setMessages((prev) => [...prev, errorAiMsg]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Tratar envio inicial caso venha da HomePage
+  useEffect(() => {
+    if (!hasInitializedRef.current) {
+      hasInitializedRef.current = true;
+      if (initialQuery) {
+        handleSendMessage(initialQuery);
+      } else if (messages.length === 0) {
+        // Se entrou diretamente em /chat sem query, inicializa com uma saudação/pergunta de exemplo
+        const defaultQuery = "Como funciona o período experimental na Lei Geral do Trabalho (LGT)?";
+        handleSendMessage(defaultQuery);
+      }
+    }
+  }, [initialQuery]);
+
+  const handleRetry = (lastQuery) => {
+    if (lastQuery) {
+      // Remove a última mensagem de erro
+      setMessages((prev) => prev.filter((m) => m.role !== "error"));
+      handleSendMessage(lastQuery);
+    }
+  };
+
+  const handleNewChat = () => {
+    setMessages([]);
+    setSessionId(null);
+    setError(null);
+    navigate("/");
+  };
+
+  const handleShare = async (text) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Legal AI - Consulta Jurídica Angola",
+          text: text,
+        });
+      } catch {
+        // Ignorar cancelamento
+      }
+    } else {
+      navigator.clipboard.writeText(text);
+      alert("Resposta copiada para a área de transferência!");
+    }
   };
 
   return (
@@ -107,14 +192,14 @@ export default function ChatPage({ onOpenPdfModal }) {
           maxW="1280px"
           mx="auto"
           flexWrap="wrap"
-          gap="8px"
+          gap="12px"
         >
           <Flex alignItems="center" gap="12px">
             <Box
               w="8px"
               h="8px"
               borderRadius="full"
-              bg="#a30019"
+              bg={isLoading ? "#fed330" : "#a30019"}
               className="animate-pulse-subtle"
             />
             <Text
@@ -126,372 +211,338 @@ export default function ChatPage({ onOpenPdfModal }) {
               color="#5c3f3d"
               textTransform="uppercase"
             >
-              Sessão Jurídica Ativa
+              {isLoading ? "A Consultar RAG..." : "Sessão Jurídica Ativa"}
             </Text>
           </Flex>
 
-          <Button
-            onClick={onOpenPdfModal}
-            size="xs"
-            variant="outline"
-            borderColor="#a30019"
-            color="#a30019"
-            fontFamily="'Montserrat', sans-serif"
-            fontWeight="600"
-            gap="4px"
-            _hover={{ bg: "#ffdad7" }}
-          >
-            <MdPictureAsPdf size={14} /> PDF RAG
-          </Button>
+          <Flex alignItems="center" gap="10px">
+            <Button
+              onClick={handleNewChat}
+              size="xs"
+              variant="outline"
+              borderColor="rgba(230, 189, 186, 0.6)"
+              color="#5c3f3d"
+              fontFamily="'Montserrat', sans-serif"
+              fontWeight="600"
+              gap="4px"
+              _hover={{ bg: "#edeeef", borderColor: "#a30019" }}
+            >
+              <MdAdd size={14} /> Nova Consulta
+            </Button>
 
-          <Text
-            fontFamily="'JetBrains Mono', monospace"
-            fontSize="12px"
-            fontWeight="500"
-            lineHeight="16px"
-            letterSpacing="0.05em"
-            color="#5c3f3d"
-            textTransform="uppercase"
-          >
-            ID: 2948-ANG-LGT
-          </Text>
+            <Button
+              onClick={onOpenPdfModal}
+              size="xs"
+              variant="outline"
+              borderColor="#a30019"
+              color="#a30019"
+              fontFamily="'Montserrat', sans-serif"
+              fontWeight="600"
+              gap="4px"
+              _hover={{ bg: "#ffdad7" }}
+            >
+              <MdPictureAsPdf size={14} /> PDF RAG
+            </Button>
+
+            <Text
+              fontFamily="'JetBrains Mono', monospace"
+              fontSize="11px"
+              fontWeight="500"
+              lineHeight="16px"
+              letterSpacing="0.05em"
+              color="#5c3f3d"
+              textTransform="uppercase"
+              display={{ base: "none", sm: "block" }}
+            >
+              ID: {sessionId ? sessionId.slice(0, 8).toUpperCase() : "ANG-LGT"}
+            </Text>
+          </Flex>
         </Flex>
       </Box>
 
       {/* Chat Content */}
       <Box maxW="1280px" mx="auto" w="100%" px={{ base: "16px", md: "40px" }} py={{ base: "24px", md: "48px" }}>
-        <Flex direction="column" gap={{ base: "24px", md: "48px" }}>
-          {/* User Message */}
-          <Flex justifyContent="flex-end" w="100%">
-            <Box
-              maxW={{ base: "92%", md: "75%" }}
-              bg="#191c1d"
-              color="white"
-              p={{ base: "16px", md: "24px" }}
-              borderRadius="16px"
-              boxShadow="xl"
-            >
-              <Text
-                fontFamily="'JetBrains Mono', monospace"
-                fontSize="11px"
-                fontWeight="500"
-                lineHeight="16px"
-                letterSpacing="0.05em"
-                color="#d9dadb"
-                mb="8px"
-                textTransform="uppercase"
-                opacity="0.7"
-              >
-                Cidadão / Consulta
-              </Text>
-              <Text
-                fontFamily="'Montserrat', sans-serif"
-                fontSize={{ base: "16px", md: "20px" }}
-                fontWeight="600"
-                lineHeight="1.4"
-                fontStyle="italic"
-              >
-                &ldquo;{userQuery}&rdquo;
-              </Text>
-            </Box>
-          </Flex>
-
-          {/* AI Response */}
-          <Flex justifyContent="flex-start" w="100%">
-            <Box
-              w="100%"
-              bg="white"
-              borderTop="4px solid #a30019"
-              borderRadius="0 0 16px 16px"
-              boxShadow="0 25px 60px rgba(0,0,0,0.08)"
-              position="relative"
-              overflow="hidden"
-            >
-              {/* Header */}
-              <Flex
-                p={{ base: "16px", md: "24px" }}
-                borderBottom="1px solid rgba(230, 189, 186, 0.2)"
-                direction={{ base: "column", sm: "row" }}
-                alignItems={{ sm: "center" }}
-                justifyContent="space-between"
-                gap="16px"
-              >
-                <Flex alignItems="center" gap="16px">
-                  <Flex
-                    w="48px"
-                    h="48px"
-                    minW="48px"
-                    bg="#a30019"
-                    alignItems="center"
-                    justifyContent="center"
-                    borderRadius="8px"
+        <Flex direction="column" gap={{ base: "24px", md: "36px" }}>
+          {messages.map((msg) => {
+            if (msg.role === "user") {
+              return (
+                <Flex key={msg.id} justifyContent="flex-end" w="100%">
+                  <Box
+                    maxW={{ base: "92%", md: "75%" }}
+                    bg="#191c1d"
+                    color="white"
+                    p={{ base: "16px", md: "24px" }}
+                    borderRadius="16px"
+                    boxShadow="xl"
                   >
-                    <MdGavel size={24} color="white" />
-                  </Flex>
-                  <Box>
+                    <Flex justifyContent="space-between" alignItems="center" mb="8px">
+                      <Text
+                        fontFamily="'JetBrains Mono', monospace"
+                        fontSize="11px"
+                        fontWeight="500"
+                        lineHeight="16px"
+                        letterSpacing="0.05em"
+                        color="#d9dadb"
+                        textTransform="uppercase"
+                        opacity="0.7"
+                      >
+                        Cidadão / Consulta
+                      </Text>
+                      {msg.timestamp && (
+                        <Text
+                          fontFamily="'JetBrains Mono', monospace"
+                          fontSize="10px"
+                          color="#a5a7a8"
+                        >
+                          {msg.timestamp}
+                        </Text>
+                      )}
+                    </Flex>
                     <Text
                       fontFamily="'Montserrat', sans-serif"
-                      fontSize={{ base: "20px", md: "24px" }}
-                      fontWeight="700"
-                      lineHeight="1.2"
-                      color="#191c1d"
-                      letterSpacing="-0.01em"
-                    >
-                      {sampleResponse.title}
-                    </Text>
-                    <Text
-                      fontFamily="'JetBrains Mono', monospace"
-                      fontSize="12px"
+                      fontSize={{ base: "15px", md: "18px" }}
                       fontWeight="600"
-                      lineHeight="16px"
-                      letterSpacing="0.05em"
-                      color="#a30019"
-                      textTransform="uppercase"
+                      lineHeight="1.5"
+                      fontStyle="italic"
                     >
-                      {sampleResponse.subtitle}
+                      &ldquo;{msg.content}&rdquo;
                     </Text>
                   </Box>
                 </Flex>
-                <Flex gap="8px" flexWrap="wrap">
-                  {sampleResponse.tags.map((tag) => (
-                    <Box
-                      key={tag}
-                      px="12px"
-                      py="4px"
-                      bg="#e7e8e9"
-                      borderRadius="full"
+              );
+            }
+
+            if (msg.role === "error") {
+              return (
+                <Flex key={msg.id} justifyContent="flex-start" w="100%">
+                  <Box
+                    w="100%"
+                    maxW="860px"
+                    bg="#fff5f5"
+                    border="1px solid #feb2b2"
+                    borderLeft="4px solid #ce1126"
+                    borderRadius="8px"
+                    p="20px"
+                    boxShadow="md"
+                  >
+                    <Flex alignItems="center" gap="10px" mb="8px">
+                      <MdErrorOutline size={22} color="#ce1126" />
+                      <Text
+                        fontFamily="'Montserrat', sans-serif"
+                        fontSize="16px"
+                        fontWeight="700"
+                        color="#ce1126"
+                      >
+                        Falha na consulta jurídica
+                      </Text>
+                    </Flex>
+                    <Text
+                      fontFamily="'Montserrat', sans-serif"
+                      fontSize="14px"
+                      color="#742a2a"
+                      mb="16px"
                     >
+                      {msg.content}
+                    </Text>
+                    {msg.lastQuery && (
+                      <Button
+                        onClick={() => handleRetry(msg.lastQuery)}
+                        size="sm"
+                        bg="#ce1126"
+                        color="white"
+                        fontFamily="'Montserrat', sans-serif"
+                        fontWeight="600"
+                        gap="6px"
+                        _hover={{ bg: "#a30019" }}
+                      >
+                        <MdRefresh size={16} /> Tentar Novamente
+                      </Button>
+                    )}
+                  </Box>
+                </Flex>
+              );
+            }
+
+            // Resposta da IA (role === "assistant")
+            return (
+              <Flex key={msg.id} justifyContent="flex-start" w="100%">
+                <Box
+                  w="100%"
+                  bg="white"
+                  borderTop="4px solid #a30019"
+                  borderRadius="0 0 16px 16px"
+                  boxShadow="0 25px 60px rgba(0,0,0,0.08)"
+                  position="relative"
+                  overflow="hidden"
+                >
+                  {/* Header */}
+                  <Flex
+                    p={{ base: "16px", md: "24px" }}
+                    borderBottom="1px solid rgba(230, 189, 186, 0.2)"
+                    direction={{ base: "column", sm: "row" }}
+                    alignItems={{ sm: "center" }}
+                    justifyContent="space-between"
+                    gap="16px"
+                  >
+                    <Flex alignItems="center" gap="16px">
+                      <Flex
+                        w="48px"
+                        h="48px"
+                        minW="48px"
+                        bg="#a30019"
+                        alignItems="center"
+                        justifyContent="center"
+                        borderRadius="8px"
+                      >
+                        <MdGavel size={24} color="white" />
+                      </Flex>
+                      <Box>
+                        <Text
+                          fontFamily="'Montserrat', sans-serif"
+                          fontSize={{ base: "18px", md: "22px" }}
+                          fontWeight="700"
+                          lineHeight="1.2"
+                          color="#191c1d"
+                          letterSpacing="-0.01em"
+                        >
+                          FUNDAMENTAÇÃO JURÍDICA
+                        </Text>
+                        <Text
+                          fontFamily="'JetBrains Mono', monospace"
+                          fontSize="12px"
+                          fontWeight="600"
+                          lineHeight="16px"
+                          letterSpacing="0.05em"
+                          color="#a30019"
+                          textTransform="uppercase"
+                        >
+                          Resposta Gerada por IA Legal RAG
+                        </Text>
+                      </Box>
+                    </Flex>
+                    <Flex gap="8px" alignItems="center">
+                      <CopyButton textToCopy={msg.content} />
+                    </Flex>
+                  </Flex>
+
+                  {/* Main Content Rendered */}
+                  <Box p={{ base: "16px", md: "24px" }}>
+                    <MarkdownRenderer content={msg.content} />
+                  </Box>
+
+                  {/* Action Footer */}
+                  <Flex
+                    bg="#f3f4f5"
+                    p={{ base: "16px", md: "24px" }}
+                    flexWrap="wrap"
+                    gap="12px"
+                    alignItems="center"
+                    borderTop="1px solid rgba(230, 189, 186, 0.2)"
+                  >
+                    <Button
+                      onClick={onOpenPdfModal}
+                      bg="#725c00"
+                      color="white"
+                      fontFamily="'Montserrat', sans-serif"
+                      fontSize={{ base: "13px", md: "15px" }}
+                      fontWeight="700"
+                      px={{ base: "14px", md: "20px" }}
+                      py={{ base: "12px", md: "16px" }}
+                      display="flex"
+                      alignItems="center"
+                      gap="8px"
+                      _hover={{ bg: "#564500" }}
+                      _active={{ transform: "scale(0.98)" }}
+                      transition="all 0.2s"
+                      borderRadius="8px"
+                    >
+                      <MdDownload size={18} />
+                      BAIXAR LEGISLAÇÃO RAG (PDF)
+                    </Button>
+
+                    <Button
+                      onClick={() => handleShare(msg.content)}
+                      bg="transparent"
+                      color="#191c1d"
+                      fontFamily="'Montserrat', sans-serif"
+                      fontSize={{ base: "13px", md: "15px" }}
+                      fontWeight="600"
+                      px={{ base: "14px", md: "20px" }}
+                      py={{ base: "12px", md: "16px" }}
+                      display="flex"
+                      alignItems="center"
+                      gap="8px"
+                      border="2px solid #191c1d"
+                      _hover={{ bg: "#191c1d", color: "white" }}
+                      transition="all 0.2s"
+                      borderRadius="8px"
+                    >
+                      <MdShare size={18} />
+                      PARTILHAR
+                    </Button>
+
+                    <Flex ml={{ base: "0", md: "auto" }} alignItems="center" gap="8px">
+                      <MdVerified size={18} color="#5c3f3d" />
                       <Text
                         fontFamily="'JetBrains Mono', monospace"
                         fontSize="11px"
                         fontWeight="600"
-                        lineHeight="16px"
-                        letterSpacing="0.05em"
                         color="#5c3f3d"
                       >
-                        {tag}
+                        VALIDADO PELO MINPRESI
                       </Text>
-                    </Box>
-                  ))}
-                </Flex>
-              </Flex>
-
-              {/* Main Content */}
-              <Box p={{ base: "16px", md: "24px" }}>
-                {/* Introduction */}
-                <Text
-                  fontFamily="'Montserrat', sans-serif"
-                  fontSize={{ base: "15px", md: "18px" }}
-                  fontWeight="400"
-                  lineHeight="1.6"
-                  color="#191c1d"
-                  mb="24px"
-                >
-                  {sampleResponse.introduction.split("Lei n.º 12/23 (Lei Geral do Trabalho)").map((part, i) =>
-                    i === 0 ? (
-                      <span key={i}>
-                        {part}
-                        <Text
-                          as="span"
-                          fontWeight="700"
-                          borderBottom="2px solid #fed330"
-                        >
-                          Lei n.º 12/23 (Lei Geral do Trabalho)
-                        </Text>
-                      </span>
-                    ) : (
-                      <span key={i}>{part}</span>
-                    )
-                  )}
-                </Text>
-
-                {/* Info Cards Grid */}
-                <Grid
-                  templateColumns={{ base: "1fr", md: "1fr 1fr" }}
-                  gap="16px"
-                  mb="24px"
-                >
-                  {sampleResponse.cards.map((card) => (
-                    <Box
-                      key={card.title}
-                      p={{ base: "16px", md: "20px" }}
-                      bg="#edeeef"
-                      borderRadius="8px"
-                      borderLeft="4px solid"
-                      borderLeftColor={card.borderColor}
-                    >
-                      <Text
-                        fontFamily="'Montserrat', sans-serif"
-                        fontSize="17px"
-                        fontWeight="700"
-                        lineHeight="24px"
-                        color="#191c1d"
-                        mb="6px"
-                      >
-                        {card.title}
-                      </Text>
-                      <Text
-                        fontFamily="'Montserrat', sans-serif"
-                        fontSize="14px"
-                        fontWeight="400"
-                        lineHeight="1.5"
-                        color="#5c3f3d"
-                      >
-                        {card.text.split(card.highlight).map((part, i) =>
-                          i === 0 ? (
-                            <span key={i}>
-                              {part}
-                              <Text as="span" fontWeight="700" color="#191c1d">
-                                {card.highlight}
-                              </Text>
-                            </span>
-                          ) : (
-                            <span key={i}>{part}</span>
-                          )
-                        )}
-                      </Text>
-                    </Box>
-                  ))}
-                </Grid>
-
-                {/* Articles Reference Section */}
-                <Box>
-                  <Text
-                    fontFamily="'JetBrains Mono', monospace"
-                    fontSize="12px"
-                    fontWeight="600"
-                    lineHeight="16px"
-                    letterSpacing="0.15em"
-                    color="#5c3f3d"
-                    textTransform="uppercase"
-                    borderBottom="1px solid rgba(230, 189, 186, 0.2)"
-                    pb="8px"
-                    mb="16px"
-                  >
-                    Artigos de Referência
-                  </Text>
-
-                  <Flex direction="column" gap="12px">
-                    {sampleResponse.articles.map((article) => (
-                      <Flex
-                        key={article.number}
-                        bg="#f8f9fa"
-                        p={{ base: "16px", md: "20px" }}
-                        borderRadius="8px"
-                        border="1px solid #e7e8e9"
-                        direction={{ base: "column", sm: "row" }}
-                        justifyContent="space-between"
-                        alignItems={{ sm: "flex-start" }}
-                        gap="12px"
-                      >
-                        <Box flex="1">
-                          <Flex alignItems="center" gap="12px" mb="6px">
-                            <Text
-                              fontFamily="'Montserrat', sans-serif"
-                              fontSize={{ base: "16px", md: "18px" }}
-                              fontWeight="700"
-                              color="#a30019"
-                            >
-                              {article.number}
-                            </Text>
-                            <Box px="8px" py="2px" bg="#e7e8e9" borderRadius="4px">
-                              <Text
-                                fontFamily="'JetBrains Mono', monospace"
-                                fontSize="11px"
-                                fontWeight="600"
-                                color="#5c3f3d"
-                              >
-                                {article.tag}
-                              </Text>
-                            </Box>
-                          </Flex>
-                          <Text
-                            fontFamily="'Montserrat', sans-serif"
-                            fontSize="14px"
-                            fontWeight="400"
-                            lineHeight="1.5"
-                            color="#191c1d"
-                            fontStyle="italic"
-                          >
-                            {article.text}
-                          </Text>
-                        </Box>
-                        <CopyButton />
-                      </Flex>
-                    ))}
+                    </Flex>
                   </Flex>
                 </Box>
-              </Box>
-
-              {/* Action Footer */}
-              <Flex
-                bg="#f3f4f5"
-                p={{ base: "16px", md: "24px" }}
-                flexWrap="wrap"
-                gap="12px"
-                alignItems="center"
-                borderTop="1px solid rgba(230, 189, 186, 0.2)"
-              >
-                <Button
-                  onClick={onOpenPdfModal}
-                  bg="#725c00"
-                  color="white"
-                  fontFamily="'Montserrat', sans-serif"
-                  fontSize={{ base: "14px", md: "16px" }}
-                  fontWeight="700"
-                  px={{ base: "16px", md: "24px" }}
-                  py={{ base: "16px", md: "20px" }}
-                  display="flex"
-                  alignItems="center"
-                  gap="8px"
-                  _hover={{ bg: "#564500" }}
-                  _active={{ transform: "scale(0.98)" }}
-                  transition="all 0.2s"
-                  borderRadius="8px"
-                >
-                  <MdDownload size={20} />
-                  BAIXAR LEGISLAÇÃO RAG (PDF)
-                </Button>
-
-                <Button
-                  bg="transparent"
-                  color="#191c1d"
-                  fontFamily="'Montserrat', sans-serif"
-                  fontSize={{ base: "14px", md: "16px" }}
-                  fontWeight="600"
-                  px={{ base: "16px", md: "24px" }}
-                  py={{ base: "16px", md: "20px" }}
-                  display="flex"
-                  alignItems="center"
-                  gap="8px"
-                  border="2px solid #191c1d"
-                  _hover={{ bg: "#191c1d", color: "white" }}
-                  transition="all 0.2s"
-                  borderRadius="8px"
-                >
-                  <MdShare size={20} />
-                  PARTILHAR
-                </Button>
-
-                <Flex ml={{ base: "0", md: "auto" }} alignItems="center" gap="8px">
-                  <MdVerified size={18} color="#5c3f3d" />
-                  <Text
-                    fontFamily="'JetBrains Mono', monospace"
-                    fontSize="11px"
-                    fontWeight="600"
-                    color="#5c3f3d"
-                  >
-                    VALIDADO PELO MINPRESI
-                  </Text>
-                </Flex>
               </Flex>
-            </Box>
-          </Flex>
+            );
+          })}
+
+          {/* Loading / Thinking State */}
+          {isLoading && (
+            <Flex justifyContent="flex-start" w="100%">
+              <Box
+                w="100%"
+                bg="white"
+                borderTop="4px solid #fed330"
+                borderRadius="0 0 16px 16px"
+                boxShadow="0 15px 40px rgba(0,0,0,0.06)"
+                p={{ base: "20px", md: "32px" }}
+              >
+                <Flex alignItems="center" gap="16px">
+                  <Spinner size="md" color="#a30019" />
+                  <Box>
+                    <Text
+                      fontFamily="'Montserrat', sans-serif"
+                      fontSize="16px"
+                      fontWeight="700"
+                      color="#191c1d"
+                    >
+                      A consultar a legislação angolana...
+                    </Text>
+                    <Text
+                      fontFamily="'JetBrains Mono', monospace"
+                      fontSize="12px"
+                      color="#5c3f3d"
+                    >
+                      Vectorstore + BM25 &bull; Avaliação e Síntese de Artigos
+                    </Text>
+                  </Box>
+                </Flex>
+              </Box>
+            </Flex>
+          )}
+
+          <div ref={messagesEndRef} />
         </Flex>
       </Box>
 
       {/* Persistent Chat Input */}
-      <ChatInput onSend={handleSend} variant="floating" />
+      <ChatInput
+        onSend={(msg) => handleSendMessage(msg)}
+        isLoading={isLoading}
+        variant="floating"
+      />
     </Box>
   );
 }
