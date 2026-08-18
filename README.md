@@ -259,7 +259,7 @@ Verifique a cláusula de período experimental expressa no seu contrato de traba
 ##  Deploy na Nuvem (Oracle Cloud Infrastructure - OCI)
 
 A aplicação foi projetada para execução em nuvem na **Oracle Cloud Infrastructure (OCI)**:
-- **Backend**: Containerizado em instância Compute VM (Ubuntu) na OCI, executando FastAPI via Uvicorn.Link: https://legai-api.duckdns.org/
+- **Backend**: Containerizado em instância Compute VM (Ubuntu) na OCI, executando FastAPI via Uvicorn.Link: https://79-72-49-80.nip.io/
 - **Frontend**: Hospedado como build estática no surge.sh. link: https://legal-ai.surge.sh
 
 > **Status do Deploy:** Concluído.
