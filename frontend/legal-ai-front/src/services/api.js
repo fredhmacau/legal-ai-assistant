@@ -42,7 +42,7 @@ export async function sendChatMessage(pergunta, sessionId = null) {
   } catch (error) {
     if (error.name === "TypeError" && error.message.includes("fetch")) {
       throw new Error(
-        "Não foi possível conectar ao servidor. Verifique se o backend está em execução na porta 8000."
+        "Não foi possível conectar ao servidor."
       );
     }
     throw error;
